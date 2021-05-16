@@ -21,6 +21,12 @@ public class LibraryService {
     }
 
     public String generateId(String isbn, int aisle) {
+        if(isbn.startsWith("Z"))
+            return "OLD" + isbn + aisle;
         return isbn + aisle;
+    }
+
+    public LibraryBean getBookById(String id) {
+        return libraryRepository.findById(id).get();
     }
 }

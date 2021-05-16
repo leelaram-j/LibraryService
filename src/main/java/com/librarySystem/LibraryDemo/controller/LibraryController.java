@@ -12,7 +12,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -50,15 +49,16 @@ public class LibraryController {
     }
 
     @GetMapping("/getBook/{id}")
-    public LibraryBean getBook(@PathVariable(value = "id") String id) {
-        try{
-            LibraryBean libraryBean = repository.findById(id).get();
-            logger.info("Book is present");
-            return libraryBean;
-        } catch (Exception e) {
-            logger.info("Book id is not present");
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-        }
+    public ResponseEntity<? extends Object> getBook(@PathVariable(value = "id") String id) {
+            if(repository.findById(id).isPresent()) {
+                LibraryBean libraryBean = repository.findById(id).get();
+                logger.info("Book is present");
+                return new ResponseEntity<LibraryBean>(libraryBean, HttpStatus.OK);
+            } else {
+                ErrorStatusbean errorStatusbean = new ErrorStatusbean();
+                errorStatusbean.setMessage("Please enter Correct book");
+                return new ResponseEntity<ErrorStatusbean>(errorStatusbean, HttpStatus.NOT_FOUND);
+            }
     }
 
     @GetMapping("/getBooks/author")
@@ -70,7 +70,7 @@ public class LibraryController {
     public ResponseEntity<? extends Object> updateBook(@PathVariable(value = "id")String id, @RequestBody LibraryBean libraryBean) {
         ErrorStatusbean errorStatusbean = new ErrorStatusbean();
         if(libraryService.isBookAlreadyExists(id)) {
-            LibraryBean record = repository.findById(id).get();
+            LibraryBean record = libraryService.getBookById(id);
             record.setAisle(libraryBean.getAisle());
             record.setAuthor(libraryBean.getAuthor());
             record.setBook_name(libraryBean.getBook_name());

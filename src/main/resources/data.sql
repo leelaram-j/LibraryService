@@ -1,0 +1,2 @@
+insert into storage3(book_name,id,isbn,aisle,author) values ('Dummy tutorial', 'JJHmdhfJDS12578', 'JJHmdhfJDS', '12578', 'Ram');
+insert into storage3(book_name,id,isbn,aisle,author) values ('SQL tutorial', 'IUIHNKJG98798', 'IUIHNKJG', '98798', 'Ram');
